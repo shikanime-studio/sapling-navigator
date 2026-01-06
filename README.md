@@ -16,15 +16,16 @@ To load the extension locally in Firefox:
 
 1. Clone the repo and install dependencies:
    - `npm install`
-2. Build the content script:
+1. Build the content script:
    - `npm run build`
-3. Copy the built file into the public directory:
+1. Copy the built file into the public directory:
    - `cp dist/content.js public/content.js`
-4. Open Firefox and go to `about:debugging`.
-5. Click "This Firefox" → "Load Temporary Add-on...".
-6. Select `public/manifest.json`.
+1. Open Firefox and go to `about:debugging`.
+1. Click "This Firefox" → "Load Temporary Add-on...".
+1. Select `public/manifest.json`.
 
 Notes:
+
 - Rebuild after changes (`npm run build`) and re-copy `dist/content.js` to `public/content.js` before reloading the temporary add-on.
 - For continuous builds, you can run `npm run dev` and re-copy on changes.
 

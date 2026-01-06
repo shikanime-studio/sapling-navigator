@@ -42,15 +42,15 @@
       ];
       perSystem = _: {
         devenv.shells.default.imports = [
-            inputs.devlib.devenvModules.docs
-            inputs.devlib.devenvModules.formats
-            inputs.devlib.devenvModules.javascript
-            inputs.devlib.devenvModules.git
-            inputs.devlib.devenvModules.github
-            inputs.devlib.devenvModules.nix
-            inputs.devlib.devenvModules.opentofu
-            inputs.devlib.devenvModules.shell
-            inputs.devlib.devenvModules.shikanime
+          devlib.devenvModules.docs
+          devlib.devenvModules.formats
+          devlib.devenvModules.javascript
+          devlib.devenvModules.git
+          devlib.devenvModules.github
+          devlib.devenvModules.nix
+          devlib.devenvModules.opentofu
+          devlib.devenvModules.shell
+          devlib.devenvModules.shikanime
         ];
       };
       systems = [
