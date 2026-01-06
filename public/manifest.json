@@ -5,7 +5,7 @@
   "description": "Add experience improvement features to Sapling and ghstack pull requests",
   "browser_specific_settings": {
     "gecko": {
-      "id": "sapling-navigator@shikanime-studio.github.com",
+      "id": "sapling-navigator@shikanime-studio",
       "data_collection_permissions": {
         "required": [
           "none"
