@@ -232,6 +232,8 @@ function injectStyles(): void {
   style.innerHTML = `
     .merge-pr.is-merging [class*="MergeBox-module__mergePartialContainer"] div:nth-child(3) {
       display: none !important;
+    }
+    .merge-pr.is-merging [class*="MergeBox-module__mergePartialContainer"] section:nth-child(2) {
       border-bottom: none !important;
     }
   `
