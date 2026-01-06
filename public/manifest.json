@@ -1,11 +1,9 @@
 {
   "manifest_version": 2,
-  "name": "Sapling/Ghstack Navigator",
+  "name": "Sapling Navigator",
   "version": "1.0",
-  "description": "Detects ghstack PRs, removes merge button, and adds navigation buttons.",
-  "permissions": [
-    "https://github.com/*"
-  ],
+  "description": "Add experience improvement features to Sapling and ghstack pull requests",
+  "permissions": ["https://github.com/*"],
   "content_scripts": [
     {
       "matches": ["https://github.com/*/pull/*"],
