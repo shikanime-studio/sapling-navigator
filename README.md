@@ -1,38 +1,45 @@
 # Sapling Navigator
 
-A Firefox extension that enhances GitHub Pull Requests, designed for stacks managed by [ghstack](https://github.com/ezyang/ghstack).
+A browser extension that enhances GitHub Pull Requests, designed for stacks managed by [ghstack](https://github.com/ezyang/ghstack) and [Sapling](https://sapling-scm.com/).
 
 ## Features
 
-- Detects ghstack PRs using content in the PR body.
+- Detects stacks from **ghstack** and **Sapling**.
 - Adds a fixed bottom navbar with:
-  - Prev/Next navigation across the ghstack.
+  - Prev/Next navigation across the stack.
   - One-click "Open in ReviewStack".
 - Lightweight and private: does not collect or transmit user data.
 
-## Install (Temporary)
-
-To load the extension locally in Firefox:
+## Development Setup
 
 1. Clone the repo and install dependencies:
-   - `npm install`
-1. Build the content script:
-   - `npm run build`
-1. Copy the built file into the public directory:
-   - `cp dist/content.js public/content.js`
-1. Open Firefox and go to `about:debugging`.
-1. Click "This Firefox" → "Load Temporary Add-on...".
-1. Select `public/manifest.json`.
+   ```bash
+   npm install
+   ```
+1. Build the extension:
+   ```bash
+   npm run build
+   ```
+   This generates the extension in the `dist/` directory.
 
-Notes:
+### Install in Chrome (or Chromium-based browsers)
 
-- Rebuild after changes (`npm run build`) and re-copy `dist/content.js` to `public/content.js` before reloading the temporary add-on.
-- For continuous builds, you can run `npm run dev` and re-copy on changes.
+1. Open `chrome://extensions/`.
+1. Enable **Developer mode** (top right).
+1. Click **Load unpacked**.
+1. Select the `dist` directory from this project.
+
+### Install in Firefox
+
+1. Open `about:debugging`.
+1. Click **This Firefox** (sidebar).
+1. Click **Load Temporary Add-on...**.
+1. Select `dist/manifest.json`.
 
 ## Usage
 
-Open any GitHub Pull Request. If it’s part of a ghstack, you will see a bottom navbar with Prev/Next navigation and a button to open the PR in ReviewStack.
+Open any GitHub Pull Request. If it’s part of a stack, you will see a bottom navbar with Prev/Next navigation and a button to open the PR in ReviewStack.
 
 ## Data Collection
 
-This extension does not collect or transmit any user data. The manifest declares `browser_specific_settings.gecko.data_collection_permissions.required: ["none"]`.
+This extension does not collect or transmit any user data. The manifest declares `data_collection_permissions.required: ["none"]`.
