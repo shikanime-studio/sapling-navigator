@@ -40,19 +40,101 @@
         git-hooks.flakeModule
         treefmt-nix.flakeModule
       ];
-      perSystem = _: {
-        devenv.shells.default.imports = [
-          devlib.devenvModules.docs
-          devlib.devenvModules.formats
-          devlib.devenvModules.javascript
-          devlib.devenvModules.git
-          devlib.devenvModules.github
-          devlib.devenvModules.nix
-          devlib.devenvModules.opentofu
-          devlib.devenvModules.shell
-          devlib.devenvModules.shikanime
-        ];
-      };
+      perSystem =
+        { config, ... }:
+        {
+          devenv.shells.default = {
+            imports = [
+              devlib.devenvModules.docs
+              devlib.devenvModules.formats
+              devlib.devenvModules.javascript
+              devlib.devenvModules.git
+              devlib.devenvModules.github
+              devlib.devenvModules.nix
+              devlib.devenvModules.opentofu
+              devlib.devenvModules.shell
+              devlib.devenvModules.shikanime
+            ];
+            github = {
+              actions = with config.devenv.shells.default.github.lib; {
+                download-dist-artifacts = {
+                  uses = "actions/download-artifact@v4";
+                  "with".name = "dist";
+                };
+
+                npm-ci.run = mkWorkflowRun [
+                  "nix"
+                  "shell"
+                  "nixpkgs#nodejs"
+                  "--command"
+                  "npm"
+                  "ci"
+                ];
+
+                npm-build.run = mkWorkflowRun [
+                  "nix"
+                  "shell"
+                  "nixpkgs#nodejs"
+                  "--command"
+                  "npm"
+                  "run"
+                  "build"
+                ];
+
+                upload-dist-artifacts = {
+                  uses = "actions/upload-artifact@v5";
+                  "with" = {
+                    name = "dist";
+                    path = "dist";
+                  };
+                };
+
+                release-upload-dist-artifacts = {
+                  env.GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+                  run = mkWorkflowRun [
+                    "gh"
+                    "release"
+                    "upload"
+                    (mkWorkflowRef "github.ref_name")
+                    "--repo"
+                    (mkWorkflowRef "github.repository")
+                    "dist"
+                  ];
+                };
+              };
+
+              workflows = with config.devenv.shells.default.github.lib; {
+                release.settings.jobs = {
+                  build = {
+                    needs = [ "publish" ];
+                    permissions.packages = "write";
+                    "runs-on" = "ubuntu-latest";
+                    steps = with config.devenv.shells.default.github.actions; [
+                      create-github-app-token
+                      checkout
+                      setup-nix
+                      npm-ci
+                      npm-build
+                      upload-dist-artifacts
+                    ];
+                  };
+
+                  upload = {
+                    permissions.packages = "write";
+                    needs = [ "build" ];
+                    "runs-on" = "ubuntu-latest";
+                    steps = with config.devenv.shells.default.github.actions; [
+                      create-github-app-token
+                      checkout
+                      download-dist-artifacts
+                      release-upload-dist-artifacts
+                    ];
+                  };
+                };
+              };
+            };
+          };
+        };
       systems = [
         "x86_64-linux"
         "x86_64-darwin"

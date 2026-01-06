@@ -1,4 +1,29 @@
 jobs:
+  build:
+    needs:
+      - publish
+    permissions:
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+      - id: createGithubAppToken
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.OPERATOR_APP_ID }}
+          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ steps.createGithubAppToken.outputs.token }}
+      - uses: shikanime-studio/setup-nix-action@v1
+        with:
+          github-token: ${{ steps.createGithubAppToken.outputs.token }}
+      - run: nix shell nixpkgs#nodejs --command npm ci
+      - run: nix shell nixpkgs#nodejs --command npm run build
+      - uses: actions/upload-artifact@v5
+        with:
+          name: dist
+          path: dist
   check:
     runs-on: ubuntu-latest
     steps:
@@ -34,6 +59,28 @@ jobs:
           REF_NAME: ${{ github.ref_name }}
           REPO: ${{ github.repository }}
         run: gh release create "$REF_NAME" --repo "$REPO" --generate-notes
+  upload:
+    needs:
+      - build
+    permissions:
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+      - id: createGithubAppToken
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.OPERATOR_APP_ID }}
+          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ steps.createGithubAppToken.outputs.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+      - env:
+          GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
+        run: gh release upload ${{ github.ref_name }} --repo ${{ github.repository }} dist
 name: Release
 'on':
   push:
