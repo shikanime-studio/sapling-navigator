@@ -9,7 +9,7 @@ async function main(): Promise<void> {
     console.log('Sapling: PR body not found in DOM, checking URL for sub-page...')
     const prUrlMatch = window.location.href.match(/github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)/)
     if (prUrlMatch) {
-      const [_, owner, repo, number] = prUrlMatch
+      const [, owner, repo, number] = prUrlMatch
       const mainPrUrl = `https://github.com/${owner}/${repo}/pull/${number}`
 
       console.log('Sapling: Detected PR URL', mainPrUrl)
@@ -42,58 +42,74 @@ async function main(): Promise<void> {
   let nextUrl: string | null = null
 
   if (!prBody) {
-    console.log('Sapling: PR body not found, skipping ghstack detection')
+    console.log('Sapling: PR body not found, skipping stack detection')
   } else {
     const isGhStack =
-        prBody.innerText.includes('Stack from [ghstack]') ||
-        prBody.innerText.includes('Stack from ghstack')
+      prBody.innerText.includes('Stack from [ghstack]') || prBody.innerText.includes('Stack from ghstack')
+    const isSaplingStack =
+      prBody.innerText.includes('Stack created with [Sapling]') ||
+      prBody.innerText.includes('Stack created with Sapling')
 
-    console.log('Sapling: isGhStack direct check:', isGhStack)
+    console.log('Sapling: Stack check:', { isGhStack, isSaplingStack })
 
-    if (isGhStack) {
-        let stackList: HTMLElement | null = null
-        const paragraphs = Array.from(prBody.querySelectorAll('p'))
-        for (const p of paragraphs) {
-            if (
-            p.innerText.includes('Stack from [ghstack]') ||
-            p.innerText.includes('Stack from ghstack')
-            ) {
-            stackList = p.nextElementSibling as HTMLElement | null
-            while (stackList && stackList.tagName !== 'UL') {
-                stackList = stackList.nextElementSibling as HTMLElement | null
+    if (isGhStack || isSaplingStack) {
+      let stackList: HTMLElement | null = null
+      const paragraphs = Array.from(prBody.querySelectorAll('p'))
+      for (const p of paragraphs) {
+        if (
+          p.innerText.includes('Stack from [ghstack]') ||
+          p.innerText.includes('Stack from ghstack') ||
+          p.innerText.includes('Stack created with [Sapling]') ||
+          p.innerText.includes('Stack created with Sapling')
+        ) {
+          stackList = p.nextElementSibling as HTMLElement | null
+          while (stackList && stackList.tagName !== 'UL' && stackList.tagName !== 'OL') {
+            stackList = stackList.nextElementSibling as HTMLElement | null
+          }
+          break
+        }
+      }
+
+      console.log('Sapling: Stack list found:', !!stackList)
+
+      if (stackList) {
+        const items = Array.from(stackList.querySelectorAll('li')) as HTMLLIElement[]
+        const currentPrUrl = window.location.href.split('?')[0]
+
+        for (let i = 0; i < items.length; i++) {
+          const item = items[i]
+          const strong = item.querySelector('strong')
+          const link = item.querySelector('a')
+          const text = item.innerText
+          const isCurrent =
+            !!strong ||
+            text.includes('Current PR') ||
+            text.trim().startsWith('->') ||
+            text.includes('👉') ||
+            (link && link.href.split('?')[0] === currentPrUrl)
+
+          if (isCurrent) {
+            console.log('Sapling: Current PR found at index', i)
+            // In stacks (ghstack/sapling), usually the top is newer (Next) and bottom is older (Prev)
+            // List:
+            // - Next PR
+            // - Current PR
+            // - Prev PR
+            if (i > 0) {
+              const nextItem = items[i - 1]
+              const nextLink = nextItem.querySelector('a') as HTMLAnchorElement | null
+              if (nextLink) nextUrl = nextLink.href
+            }
+
+            if (i < items.length - 1) {
+              const prevItem = items[i + 1]
+              const prevLink = prevItem.querySelector('a') as HTMLAnchorElement | null
+              if (prevLink) prevUrl = prevLink.href
             }
             break
-            }
+          }
         }
-
-        console.log('Sapling: Stack list found:', !!stackList)
-
-        if (stackList) {
-            const items = Array.from(stackList.querySelectorAll('li')) as HTMLLIElement[]
-            for (let i = 0; i < items.length; i++) {
-                const item = items[i]
-                const strong = item.querySelector('strong')
-                const text = item.innerText
-                const isCurrent =
-                !!strong || text.includes('Current PR') || text.trim().startsWith('->') || text.includes('👉')
-
-                if (isCurrent) {
-                console.log('Sapling: Current PR found at index', i)
-                if (i > 0) {
-                    const nextItem = items[i - 1]
-                    const link = nextItem.querySelector('a') as HTMLAnchorElement | null
-                    if (link) nextUrl = link.href
-                }
-
-                if (i < items.length - 1) {
-                    const prevItem = items[i + 1]
-                    const link = prevItem.querySelector('a') as HTMLAnchorElement | null
-                    if (link) prevUrl = link.href
-                }
-                break
-                }
-            }
-        }
+      }
     }
   }
 
@@ -139,7 +155,7 @@ async function main(): Promise<void> {
         // ReviewStack Button
         const prUrlMatch = window.location.href.match(/github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)/)
         if (prUrlMatch) {
-            const [_, owner, repo, number] = prUrlMatch
+            const [, owner, repo, number] = prUrlMatch
             const reviewStackUrl = `https://reviewstack.dev/${owner}/${repo}/pull/${number}`
             const reviewStackBtn = document.createElement('a')
             reviewStackBtn.href = reviewStackUrl
