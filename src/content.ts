@@ -106,38 +106,38 @@ async function main(): Promise<void> {
 
   console.log('Sapling: Navigation URLs:', { prevUrl, nextUrl })
 
-  // Ensure navbar exists
+  // Ensure navbar exists and is updated
   const appMain = document.querySelector('.application-main') as HTMLElement | null
-  if (appMain && !document.querySelector('#sapling-navbar')) {
-    console.log('Sapling: Injecting navbar...')
-    const navbar = document.createElement('div')
-    navbar.id = 'sapling-navbar'
-    navbar.className = 'd-flex flex-justify-between flex-items-center px-3 py-2 color-bg-subtle border-top'
-    navbar.style.position = 'fixed'
-    navbar.style.bottom = '0'
-    navbar.style.left = '0'
-    navbar.style.right = '0'
-    navbar.style.zIndex = '999'
+  
+  if (appMain) {
+    let navbar = document.querySelector('#sapling-navbar') as HTMLElement | null
+    if (!navbar) {
+      console.log('Sapling: Creating navbar...')
+      navbar = document.createElement('div')
+      navbar.id = 'sapling-navbar'
+      navbar.className = 'd-flex flex-justify-between flex-items-center px-3 py-2 color-bg-subtle border-top'
+      navbar.style.position = 'fixed'
+      navbar.style.bottom = '0'
+      navbar.style.left = '0'
+      navbar.style.right = '0'
+      navbar.style.zIndex = '999'
 
-    const leftGroup = document.createElement('div')
-    leftGroup.className = 'd-flex flex-items-center'
-    const logo = document.createElement('span')
-    logo.innerText = '🌱 Sapling'
-    logo.className = 'text-bold mr-2'
-    leftGroup.appendChild(logo)
+      const leftGroup = document.createElement('div')
+      leftGroup.className = 'd-flex flex-items-center'
+      const logo = document.createElement('span')
+      logo.innerText = '🌱 Sapling'
+      logo.className = 'text-bold mr-2'
+      leftGroup.appendChild(logo)
+      navbar.appendChild(leftGroup)
 
-    navbar.appendChild(leftGroup)
+      const rightGroup = document.createElement('div')
+      rightGroup.id = 'sapling-navbar-right'
+      rightGroup.className = 'd-flex flex-items-center'
+      navbar.appendChild(rightGroup)
 
-    const rightGroup = document.createElement('div')
-    rightGroup.id = 'sapling-navbar-right'
-    rightGroup.className = 'd-flex flex-items-center'
-    navbar.appendChild(rightGroup)
+      document.body.appendChild(navbar)
+    }
 
-    document.body.appendChild(navbar)
-  }
-
-  const navbar = document.querySelector('#sapling-navbar')
-  if (navbar) {
     const rightGroup = navbar.querySelector('#sapling-navbar-right') as HTMLElement
     if (rightGroup) {
         // Clear existing content to prevent duplicates if main() runs multiple times
