@@ -1,21 +1,37 @@
-# Sapling/Ghstack Navigator Extension
+# Sapling Navigator
 
-This Firefox extension enhances the GitHub Pull Request interface for PRs managed by [ghstack](https://github.com/ezyang/ghstack).
+A Firefox extension that enhances GitHub Pull Requests, designed for stacks managed by [ghstack](https://github.com/ezyang/ghstack).
 
 ## Features
 
-- **Detects ghstack PRs**: Automatically identifies PRs that are part of a ghstack.
-- **Removes Merge Button**: Hides the merge button to prevent accidental merges via GitHub UI (as ghstack PRs should be landed via `ghstack land`).
-- **Stack Navigation**: Adds "Next" and "Prev" buttons to the PR header to easily navigate up and down the stack.
+- Detects ghstack PRs using content in the PR body.
+- Adds a fixed bottom navbar with:
+  - Prev/Next navigation across the ghstack.
+  - One-click "Open in ReviewStack".
+- Lightweight and private: does not collect or transmit user data.
 
-## Installation
+## Install (Temporary)
 
-1.  Clone this repository or download the files.
-2.  Open Firefox and navigate to `about:debugging`.
-3.  Click on "This Firefox" in the sidebar.
-4.  Click "Load Temporary Add-on...".
-5.  Select the `manifest.json` file from this directory.
+To load the extension locally in Firefox:
+
+1. Clone the repo and install dependencies:
+   - `npm install`
+2. Build the content script:
+   - `npm run build`
+3. Copy the built file into the public directory:
+   - `cp dist/content.js public/content.js`
+4. Open Firefox and go to `about:debugging`.
+5. Click "This Firefox" → "Load Temporary Add-on...".
+6. Select `public/manifest.json`.
+
+Notes:
+- Rebuild after changes (`npm run build`) and re-copy `dist/content.js` to `public/content.js` before reloading the temporary add-on.
+- For continuous builds, you can run `npm run dev` and re-copy on changes.
 
 ## Usage
 
-Navigate to any GitHub Pull Request that is part of a ghstack. You should see the navigation buttons in the header, and the merge button should be hidden.
+Open any GitHub Pull Request. If it’s part of a ghstack, you will see a bottom navbar with Prev/Next navigation and a button to open the PR in ReviewStack.
+
+## Data Collection
+
+This extension does not collect or transmit any user data. The manifest declares `browser_specific_settings.gecko.data_collection_permissions.required: ["none"]`.
