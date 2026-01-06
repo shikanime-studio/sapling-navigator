@@ -39,7 +39,3 @@ A browser extension that enhances GitHub Pull Requests, designed for stacks mana
 ## Usage
 
 Open any GitHub Pull Request. If it’s part of a stack, you will see a bottom navbar with Prev/Next navigation and a button to open the PR in ReviewStack.
-
-## Data Collection
-
-This extension does not collect or transmit any user data. The manifest declares `data_collection_permissions.required: ["none"]`.
