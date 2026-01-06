@@ -58,7 +58,7 @@
             github = {
               actions = with config.devenv.shells.default.github.lib; {
                 download-dist-artifacts = {
-                  uses = "actions/download-artifact@v4";
+                  uses = "actions/download-artifact@v5";
                   "with".name = "dist";
                 };
 
@@ -82,7 +82,7 @@
                 ];
 
                 upload-dist-artifacts = {
-                  uses = "actions/upload-artifact@v5";
+                  uses = "actions/upload-artifact@v5s";
                   "with" = {
                     name = "dist";
                     path = "dist";

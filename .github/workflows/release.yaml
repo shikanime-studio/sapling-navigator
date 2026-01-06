@@ -20,7 +20,7 @@ jobs:
           github-token: ${{ steps.createGithubAppToken.outputs.token }}
       - run: nix shell nixpkgs#nodejs --command npm ci
       - run: nix shell nixpkgs#nodejs --command npm run build
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v5s
         with:
           name: dist
           path: dist
@@ -75,7 +75,7 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ steps.createGithubAppToken.outputs.token }}
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           name: dist
       - env:
