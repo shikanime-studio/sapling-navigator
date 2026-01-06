@@ -64,7 +64,7 @@
 
                 npm-ci.run = mkWorkflowRun [
                   "nix"
-                  "shell"
+                  "run"
                   "nixpkgs#nodejs"
                   "--command"
                   "npm"
@@ -73,7 +73,7 @@
 
                 npm-build.run = mkWorkflowRun [
                   "nix"
-                  "shell"
+                  "run"
                   "nixpkgs#nodejs"
                   "--command"
                   "npm"
@@ -98,9 +98,20 @@
                     (mkWorkflowRef "github.ref_name")
                     "--repo"
                     (mkWorkflowRef "github.repository")
-                    "dist"
+                    "sapling-navigator.zip"
                   ];
                 };
+
+                zip-dist-artifacts.run = mkWorkflowRun [
+                  "nix"
+                  "run"
+                  "nixpkgs#zip"
+                  "--command"
+                  "zip"
+                  "-r"
+                  "sapling-navigator.zip"
+                  "dist/*"
+                ];
               };
 
               workflows = with config.devenv.shells.default.github.lib; {
@@ -127,6 +138,7 @@
                       create-github-app-token
                       checkout
                       download-dist-artifacts
+                      zip-dist-artifacts
                       release-upload-dist-artifacts
                     ];
                   };
