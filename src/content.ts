@@ -1,5 +1,6 @@
 async function main(): Promise<void> {
   console.log('Sapling: Extension loaded')
+
   let prBody = document.querySelector('.comment-body') as HTMLElement | null
 
   // If we are on a tab like /files, /commits, /checks, the body might not be present or visible.
@@ -105,16 +106,17 @@ async function main(): Promise<void> {
 
   console.log('Sapling: Navigation URLs:', { prevUrl, nextUrl })
 
+  // Ensure navbar exists
   const appMain = document.querySelector('.application-main') as HTMLElement | null
-  console.log('Sapling: .application-main found:', !!appMain)
-
   if (appMain && !document.querySelector('#sapling-navbar')) {
     console.log('Sapling: Injecting navbar...')
     const navbar = document.createElement('div')
     navbar.id = 'sapling-navbar'
-    navbar.className = 'd-flex flex-justify-between flex-items-center px-3 py-2 color-bg-subtle border-bottom'
-    navbar.style.position = 'sticky'
-    navbar.style.top = '0'
+    navbar.className = 'd-flex flex-justify-between flex-items-center px-3 py-2 color-bg-subtle border-top'
+    navbar.style.position = 'fixed'
+    navbar.style.bottom = '0'
+    navbar.style.left = '0'
+    navbar.style.right = '0'
     navbar.style.zIndex = '999'
 
     const leftGroup = document.createElement('div')
@@ -127,57 +129,67 @@ async function main(): Promise<void> {
     navbar.appendChild(leftGroup)
 
     const rightGroup = document.createElement('div')
+    rightGroup.id = 'sapling-navbar-right'
     rightGroup.className = 'd-flex flex-items-center'
-
-    // ReviewStack Button
-    const prUrlMatch = window.location.href.match(/github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)/)
-    if (prUrlMatch) {
-        const [_, owner, repo, number] = prUrlMatch
-        const reviewStackUrl = `https://reviewstack.dev/${owner}/${repo}/pull/${number}`
-        const reviewStackBtn = document.createElement('a')
-        reviewStackBtn.href = reviewStackUrl
-        reviewStackBtn.className = 'btn btn-sm mr-2'
-        reviewStackBtn.target = '_blank'
-        reviewStackBtn.innerText = 'Open in ReviewStack'
-        rightGroup.appendChild(reviewStackBtn)
-    }
-
-    const btnGroup = document.createElement('div')
-    btnGroup.className = 'BtnGroup mr-2'
-
-    if (prevUrl) {
-      const prevBtn = document.createElement('a')
-      prevBtn.href = prevUrl
-      prevBtn.className = 'btn btn-sm BtnGroup-item'
-      prevBtn.innerText = 'Prev'
-      btnGroup.appendChild(prevBtn)
-    } else {
-      const prevBtn = document.createElement('button')
-      prevBtn.disabled = true
-      prevBtn.className = 'btn btn-sm BtnGroup-item'
-      prevBtn.innerText = 'Prev'
-      btnGroup.appendChild(prevBtn)
-    }
-
-    if (nextUrl) {
-      const nextBtn = document.createElement('a')
-      nextBtn.href = nextUrl
-      nextBtn.className = 'btn btn-sm BtnGroup-item'
-      nextBtn.innerText = 'Next'
-      btnGroup.appendChild(nextBtn)
-    } else {
-      const nextBtn = document.createElement('button')
-      nextBtn.disabled = true
-      nextBtn.className = 'btn btn-sm BtnGroup-item'
-      nextBtn.innerText = 'Next'
-      btnGroup.appendChild(nextBtn)
-    }
-
-    rightGroup.appendChild(btnGroup)
-
     navbar.appendChild(rightGroup)
-    appMain.prepend(navbar)
-    console.log('Sapling: Navbar injected')
+
+    document.body.appendChild(navbar)
+  }
+
+  const navbar = document.querySelector('#sapling-navbar')
+  if (navbar) {
+    const rightGroup = navbar.querySelector('#sapling-navbar-right') as HTMLElement
+    if (rightGroup) {
+        // Clear existing content to prevent duplicates if main() runs multiple times
+        rightGroup.innerHTML = ''
+
+        // ReviewStack Button
+        const prUrlMatch = window.location.href.match(/github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)/)
+        if (prUrlMatch) {
+            const [_, owner, repo, number] = prUrlMatch
+            const reviewStackUrl = `https://reviewstack.dev/${owner}/${repo}/pull/${number}`
+            const reviewStackBtn = document.createElement('a')
+            reviewStackBtn.href = reviewStackUrl
+            reviewStackBtn.className = 'btn btn-sm mr-2'
+            reviewStackBtn.target = '_blank'
+            reviewStackBtn.innerText = 'Open in ReviewStack'
+            rightGroup.appendChild(reviewStackBtn)
+        }
+
+        const btnGroup = document.createElement('div')
+        btnGroup.className = 'BtnGroup mr-2'
+
+        if (prevUrl) {
+        const prevBtn = document.createElement('a')
+        prevBtn.href = prevUrl
+        prevBtn.className = 'btn btn-sm BtnGroup-item'
+        prevBtn.innerText = 'Prev'
+        btnGroup.appendChild(prevBtn)
+        } else {
+        const prevBtn = document.createElement('button')
+        prevBtn.disabled = true
+        prevBtn.className = 'btn btn-sm BtnGroup-item'
+        prevBtn.innerText = 'Prev'
+        btnGroup.appendChild(prevBtn)
+        }
+
+        if (nextUrl) {
+        const nextBtn = document.createElement('a')
+        nextBtn.href = nextUrl
+        nextBtn.className = 'btn btn-sm BtnGroup-item'
+        nextBtn.innerText = 'Next'
+        btnGroup.appendChild(nextBtn)
+        } else {
+        const nextBtn = document.createElement('button')
+        nextBtn.disabled = true
+        nextBtn.className = 'btn btn-sm BtnGroup-item'
+        nextBtn.innerText = 'Next'
+        btnGroup.appendChild(nextBtn)
+        }
+
+        rightGroup.appendChild(btnGroup)
+    }
+    console.log('Sapling: Navbar content updated')
   }
 }
 
