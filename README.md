@@ -4,6 +4,8 @@ A browser extension that enhances GitHub Pull Requests, designed for stacks mana
 
 ## Features
 
+![Screenshot](./images/screenshot.png)
+
 - Detects stacks from **ghstack** and **Sapling**.
 - Adds a fixed bottom navbar with:
   - Prev/Next navigation across the stack.
