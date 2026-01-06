@@ -5,12 +5,4 @@ export default {
     "@trivago/prettier-plugin-sort-imports",
     "prettier-plugin-autocorrect",
   ],
-  overrides: [
-    {
-      files: "*.astro",
-      options: {
-        parser: "astro",
-      },
-    },
-  ],
 } satisfies Config;
