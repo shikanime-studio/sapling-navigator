@@ -252,3 +252,13 @@ async function main(): Promise<void> {
 }
 
 main()
+
+const observer = new MutationObserver(() => {
+  const appMain = document.querySelector('.application-main')
+  const navMissing = appMain && !document.querySelector('#sapling-navbar')
+  if (navMissing) {
+    main()
+  }
+})
+
+observer.observe(document.body, { childList: true, subtree: true })
