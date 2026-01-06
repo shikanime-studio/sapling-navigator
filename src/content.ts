@@ -50,14 +50,7 @@ async function main(): Promise<void> {
 
     console.log('Sapling: isGhStack direct check:', isGhStack)
 
-    let isGhStackPr = isGhStack
-    if (!isGhStack) {
-        const ghstackLink = prBody.querySelector('a[href*="ghstack"]')
-        console.log('Sapling: ghstack link check:', !!ghstackLink)
-        if (ghstackLink) isGhStackPr = true
-    }
-
-    if (isGhStackPr) {
+    if (isGhStack) {
         let stackList: HTMLElement | null = null
         const paragraphs = Array.from(prBody.querySelectorAll('p'))
         for (const p of paragraphs) {
@@ -108,7 +101,7 @@ async function main(): Promise<void> {
 
   // Ensure navbar exists and is updated
   const appMain = document.querySelector('.application-main') as HTMLElement | null
-  
+
   if (appMain) {
     let navbar = document.querySelector('#sapling-navbar') as HTMLElement | null
     if (!navbar) {
