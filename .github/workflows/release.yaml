@@ -18,8 +18,8 @@ jobs:
       - uses: shikanime-studio/setup-nix-action@v1
         with:
           github-token: ${{ steps.createGithubAppToken.outputs.token }}
-      - run: nix run nixpkgs#nodejs --command npm ci
-      - run: nix run nixpkgs#nodejs --command npm run build
+      - run: nix shell nixpkgs#nodejs --command npm ci
+      - run: nix shell nixpkgs#nodejs --command npm run build
       - uses: actions/upload-artifact@v5
         with:
           name: dist
@@ -78,7 +78,7 @@ jobs:
       - uses: actions/download-artifact@v5
         with:
           name: dist
-      - run: 'cd dist && nix run nixpkgs#zip -r sapling-navigator.zip .
+      - run: 'cd dist && nix run nixpkgs#zip -- -r sapling-navigator.zip .
 
 '
       - env:

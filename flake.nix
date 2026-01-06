@@ -64,7 +64,7 @@
 
                 npm-ci.run = mkWorkflowRun [
                   "nix"
-                  "run"
+                  "shell"
                   "nixpkgs#nodejs"
                   "--command"
                   "npm"
@@ -73,7 +73,7 @@
 
                 npm-build.run = mkWorkflowRun [
                   "nix"
-                  "run"
+                  "shell"
                   "nixpkgs#nodejs"
                   "--command"
                   "npm"
@@ -103,7 +103,7 @@
                 };
 
                 zip-dist-artifacts.run = ''
-                  cd dist && nix run nixpkgs#zip -r sapling-navigator.zip .
+                  cd dist && nix run nixpkgs#zip -- -r sapling-navigator.zip .
                 '';
               };
 
