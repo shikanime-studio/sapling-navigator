@@ -78,7 +78,9 @@ jobs:
       - uses: actions/download-artifact@v5
         with:
           name: dist
-      - run: nix run nixpkgs#zip --command zip -r sapling-navigator.zip dist/*
+      - run: 'cd dist && nix run nixpkgs#zip -r sapling-navigator.zip .
+
+'
       - env:
           GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
         run: gh release upload ${{ github.ref_name }} --repo ${{ github.repository }} sapling-navigator.zip

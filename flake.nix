@@ -102,16 +102,9 @@
                   ];
                 };
 
-                zip-dist-artifacts.run = mkWorkflowRun [
-                  "nix"
-                  "run"
-                  "nixpkgs#zip"
-                  "--command"
-                  "zip"
-                  "-r"
-                  "sapling-navigator.zip"
-                  "dist/*"
-                ];
+                zip-dist-artifacts.run = ''
+                  cd dist && nix run nixpkgs#zip -r sapling-navigator.zip .
+                '';
               };
 
               workflows = with config.devenv.shells.default.github.lib; {
