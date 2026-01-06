@@ -221,10 +221,30 @@ function updateNavbar(navbar: HTMLElement, prevUrl: string | null, nextUrl: stri
 }
 
 /**
+ * Injects styles to hide the merge PR button.
+ */
+function injectStyles(): void {
+  const styleId = 'sapling-styles'
+  if (document.getElementById(styleId)) return
+
+  const style = document.createElement('style')
+  style.id = styleId
+  style.innerHTML = `
+    .merge-pr.is-merging [class*="MergeBox-module__mergePartialContainer"] div:nth-child(3) {
+      display: none !important;
+      border-bottom: none !important;
+    }
+  `
+  document.head.appendChild(style)
+}
+
+/**
  * Main entry point for the extension.
  */
 async function main(): Promise<void> {
   console.log('Sapling: Extension loaded')
+
+  injectStyles()
 
   const prBody = await getPrBody()
   let prevUrl: string | null = null
