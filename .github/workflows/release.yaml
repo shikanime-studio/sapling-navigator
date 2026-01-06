@@ -20,7 +20,7 @@ jobs:
           github-token: ${{ steps.createGithubAppToken.outputs.token }}
       - run: nix shell nixpkgs#nodejs --command npm ci
       - run: nix shell nixpkgs#nodejs --command npm run build
-      - uses: actions/upload-artifact@v5s
+      - uses: actions/upload-artifact@v5
         with:
           name: dist
           path: dist

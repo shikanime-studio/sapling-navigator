@@ -82,7 +82,7 @@
                 ];
 
                 upload-dist-artifacts = {
-                  uses = "actions/upload-artifact@v5s";
+                  uses = "actions/upload-artifact@v5";
                   "with" = {
                     name = "dist";
                     path = "dist";
