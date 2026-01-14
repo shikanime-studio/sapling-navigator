@@ -1,6 +1,6 @@
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     steps:
     - id: createGithubAppToken
       uses: actions/create-github-app-token@v2
@@ -14,14 +14,15 @@ jobs:
     - uses: shikanime-studio/setup-nix-action@v1
       with:
         github-token: ${{ steps.createGithubAppToken.outputs.token }}
-    - run: nix flake check --accept-flake-config --all-systems --no-pure-eval
-name: Check
+    - run: nix flake check --accept-flake-config --no-pure-eval
+    strategy:
+      matrix:
+        include:
+        - extra-platforms: aarch64-linux
+          os: ubuntu-latest
+name: Integration
 'on':
   pull_request:
     branches:
     - main
     - gh/*/*/base
-  push:
-    branches:
-    - main
-    - release-*

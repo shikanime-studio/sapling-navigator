@@ -1,6 +1,6 @@
 {
   inputs = {
-  devenv = {
+    devenv = {
       url = "github:cachix/devenv";
       inputs = {
         flake-parts.follows = "flake-parts";
@@ -32,6 +32,8 @@
         flake-parts.follows = "flake-parts";
       };
     };
+
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";
@@ -140,7 +142,7 @@
               workflows = with config.devenv.shells.default.github.lib; {
                 release.settings.jobs = {
                   build = {
-                    needs = [ "publish" ];
+                    needs = [ "release-tag" ];
                     permissions.packages = "write";
                     "runs-on" = "ubuntu-latest";
                     steps = with config.devenv.shells.default.github.actions; [
