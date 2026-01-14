@@ -29,7 +29,6 @@
       url = "github:cachix/git-hooks.nix";
       inputs = {
         nixpkgs.follows = "nixpkgs";
-        flake-parts.follows = "flake-parts";
       };
     };
 
@@ -91,7 +90,10 @@
               actions = with config.devenv.shells.default.github.lib; {
                 download-dist-artifacts = {
                   uses = "actions/download-artifact@v5";
-                  "with".name = "dist";
+                  "with" = {
+                    name = "dist";
+                    path = "dist";
+                  };
                 };
 
                 npm-ci.run = mkWorkflowRun [

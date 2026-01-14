@@ -100,6 +100,7 @@ jobs:
     - uses: actions/download-artifact@v5
       with:
         name: dist
+        path: dist
     - run: 'cd dist && nix run nixpkgs#zip -- -r sapling-navigator.zip .
 
         '
