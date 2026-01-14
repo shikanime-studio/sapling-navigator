@@ -78,7 +78,44 @@ function getStackList(prBody: HTMLElement): HTMLElement | null {
 }
 
 /**
- * Parses the stack list to find previous and next PR URLs.
+ * Applies the current PR view suffix (e.g. /files, /commits, /checks) plus
+ * query and hash to a target PR URL if it doesn't already have one.
+ */
+function applyCurrentView(targetHref: string): string {
+  try {
+    const currentUrl = new URL(window.location.href)
+    const targetUrl = new URL(targetHref, window.location.origin)
+
+    const currentMatch = currentUrl.pathname.match(
+      /^(\/[^/]+\/[^/]+\/pull\/\d+)(\/.*)?$/
+    )
+    const targetMatch = targetUrl.pathname.match(
+      /^(\/[^/]+\/[^/]+\/pull\/\d+)(\/.*)?$/
+    )
+
+    if (!currentMatch || !targetMatch) {
+      return targetHref
+    }
+
+    const currentSuffix = currentMatch[2] ?? ''
+    const targetSuffix = targetMatch[2] ?? ''
+
+    if (!targetSuffix && currentSuffix) {
+      targetUrl.pathname = `${targetMatch[1]}${currentSuffix}`
+    }
+
+    targetUrl.search = currentUrl.search
+    targetUrl.hash = currentUrl.hash
+
+    return targetUrl.toString()
+  } catch {
+    return targetHref
+  }
+}
+
+/**
+ * Parses the stack list to find previous and next PR URLs, adjusted to match
+ * the current GitHub PR view (main page, files, commits, checks).
  */
 function getNavigationLinks(stackList: HTMLElement): { prevUrl: string | null; nextUrl: string | null } {
   let prevUrl: string | null = null
@@ -108,13 +145,13 @@ function getNavigationLinks(stackList: HTMLElement): { prevUrl: string | null; n
       if (i > 0) {
         const nextItem = items[i - 1]
         const nextLink = nextItem.querySelector('a') as HTMLAnchorElement | null
-        if (nextLink) nextUrl = nextLink.href
+        if (nextLink) nextUrl = applyCurrentView(nextLink.href)
       }
 
       if (i < items.length - 1) {
         const prevItem = items[i + 1]
         const prevLink = prevItem.querySelector('a') as HTMLAnchorElement | null
-        if (prevLink) prevUrl = prevLink.href
+        if (prevLink) prevUrl = applyCurrentView(prevLink.href)
       }
       break
     }
