@@ -2,18 +2,14 @@
   "browser_specific_settings": {
     "gecko": {
       "data_collection_permissions": {
-        "required": [
-          "none"
-        ]
+        "required": ["none"]
       },
       "id": "sapling-navigator@shikanime-studio"
     }
   },
   "content_scripts": [
     {
-      "js": [
-        "content.js"
-      ],
+      "js": ["content.js"],
       "matches": [
         "https://github.com/*/pull/*",
         "https://github.com/*/pull/*/checks",
@@ -24,11 +20,12 @@
     }
   ],
   "description": "Add experience improvement features to Sapling and ghstack pull requests",
-  "host_permissions": [
-    "https://github.com/*"
-  ],
+  "host_permissions": ["https://github.com/*"],
   "manifest_version": 3,
   "name": "Sapling Navigator",
-  "permissions": [],
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "permissions": ["tabs"],
   "version": "1.4.2"
 }

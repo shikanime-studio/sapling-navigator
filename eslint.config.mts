@@ -16,13 +16,13 @@ export default defineConfig(
     files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     extends: [
       eslint.configs.recommended,
-      tseslint.configs.strict,
-      tseslint.configs.stylistic,
+      tseslint.configs.strictTypeChecked,
+      tseslint.configs.stylisticTypeChecked,
     ],
     languageOptions: {
       globals: {
         ...globals.browser,
-        ...globals.node,
+        ...globals.webextensions,
       },
     },
   },

@@ -76,18 +76,15 @@
         {
           devenv.shells.default = {
             imports = [
-              devlib.devenvModules.docs
-              devlib.devenvModules.formats
               devlib.devenvModules.javascript
               devlib.devenvModules.git
               devlib.devenvModules.github
               devlib.devenvModules.nix
-              devlib.devenvModules.opentofu
               devlib.devenvModules.shell
-              devlib.devenvModules.shikanime
+              devlib.devenvModules.shikanime-studio
             ];
-            github = {
-              actions = with config.devenv.shells.default.github.lib; {
+            github = with config.devenv.shells.default.github.lib; {
+              actions = {
                 download-dist-artifacts = {
                   uses = "actions/download-artifact@v5";
                   "with" = {
@@ -96,24 +93,9 @@
                   };
                 };
 
-                npm-ci.run = mkWorkflowRun [
-                  "nix"
-                  "shell"
-                  "nixpkgs#nodejs"
-                  "--command"
-                  "npm"
-                  "ci"
-                ];
+                npm-ci.run = "nix shell nixpkgs#nodejs --command npm ci";
 
-                npm-build.run = mkWorkflowRun [
-                  "nix"
-                  "shell"
-                  "nixpkgs#nodejs"
-                  "--command"
-                  "npm"
-                  "run"
-                  "build"
-                ];
+                npm-build.run = "nix shell nixpkgs#nodejs --command npm run build";
 
                 upload-dist-artifacts = {
                   uses = "actions/upload-artifact@v5";
@@ -125,15 +107,9 @@
 
                 release-upload-dist-artifacts = {
                   env.GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-                  run = mkWorkflowRun [
-                    "gh"
-                    "release"
-                    "upload"
-                    (mkWorkflowRef "github.ref_name")
-                    "--repo"
-                    (mkWorkflowRef "github.repository")
-                    "sapling-navigator.zip"
-                  ];
+                  run =
+                    "gh release upload ${mkWorkflowRef " github.ref_name "} "
+                    + "--repo ${mkWorkflowRef " github.repository "} sapling-navigator.zip";
                 };
 
                 zip-dist-artifacts.run = ''
@@ -141,34 +117,32 @@
                 '';
               };
 
-              workflows = with config.devenv.shells.default.github.lib; {
-                release.settings.jobs = {
-                  build = {
-                    needs = [ "release-tag" ];
-                    permissions.packages = "write";
-                    "runs-on" = "ubuntu-latest";
-                    steps = with config.devenv.shells.default.github.actions; [
-                      create-github-app-token
-                      checkout
-                      setup-nix
-                      npm-ci
-                      npm-build
-                      upload-dist-artifacts
-                    ];
-                  };
+              workflows.release.settings.jobs = {
+                build = {
+                  needs = [ "release-tag" ];
+                  permissions.packages = "write";
+                  "runs-on" = "ubuntu-slim";
+                  steps = with config.devenv.shells.default.github.actions; [
+                    create-github-app-token
+                    checkout
+                    setup-nix
+                    npm-ci
+                    npm-build
+                    upload-dist-artifacts
+                  ];
+                };
 
-                  upload = {
-                    permissions.packages = "write";
-                    needs = [ "build" ];
-                    "runs-on" = "ubuntu-latest";
-                    steps = with config.devenv.shells.default.github.actions; [
-                      create-github-app-token
-                      checkout
-                      download-dist-artifacts
-                      zip-dist-artifacts
-                      release-upload-dist-artifacts
-                    ];
-                  };
+                upload = {
+                  permissions.packages = "write";
+                  needs = [ "build" ];
+                  "runs-on" = "ubuntu-slim";
+                  steps = with config.devenv.shells.default.github.actions; [
+                    create-github-app-token
+                    checkout
+                    download-dist-artifacts
+                    zip-dist-artifacts
+                    release-upload-dist-artifacts
+                  ];
                 };
               };
             };
