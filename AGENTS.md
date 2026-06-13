@@ -1,4 +1,4 @@
-# Sapling-Navigator
+# Sapling Navigator
 
 A browser extension that enhances GitHub Pull Requests for stacks managed by ghstack and Sapling. Adds a fixed bottom navbar with Prev/Next navigation and one-click "Open in ReviewStack".
 
