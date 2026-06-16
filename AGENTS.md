@@ -1,6 +1,8 @@
 # Sapling Navigator
 
-A browser extension that enhances GitHub Pull Requests for stacks managed by ghstack and Sapling. Adds a fixed bottom navbar with Prev/Next navigation and one-click "Open in ReviewStack".
+A browser extension that enhances GitHub Pull Requests for stacks managed by
+ghstack and Sapling. Adds a fixed bottom navbar with Prev/Next navigation and
+one-click "Open in ReviewStack".
 
 **Language:** TypeScript
 
@@ -10,6 +12,11 @@ A browser extension that enhances GitHub Pull Requests for stacks managed by ghs
 - `dist/` — Built extension output
 - `images/` — Screenshots and assets
 - `manifest.json` — Extension manifest (Chrome and Firefox)
+
+## Targets
+
+- Chrome (Manifest V3)
+- Firefox (Manifest V2/V3)
 
 ## Commit Style
 
@@ -33,4 +40,5 @@ A browser extension that enhances GitHub Pull Requests for stacks managed by ghs
 - Require signed commits
 - Squash+rebase merge only
 
-*Licensed under Apache-2.0. Test on both Chrome and Firefox before submitting*
+*Licensed under Apache-2.0. Test on both Chrome and Firefox before submitting.
+Always use worktrees when making changes.*
